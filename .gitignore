@@ -1,0 +1,7 @@
+android/release.keystore
+android/local.properties
+android/build/
+android/.gradle/
+sdk-download/
+*.apk
+*.idsig

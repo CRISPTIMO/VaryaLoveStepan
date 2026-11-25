@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/pink_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+    <color name="pink_bg">#FFE3F1</color>
+    <color name="pink_icon">#FF6FAE</color>
+</resources>

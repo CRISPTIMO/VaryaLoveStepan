@@ -1,0 +1,21 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace = 'com.varya.mentions'
+    compileSdk = 37
+
+    defaultConfig {
+        applicationId = 'com.varya.mentions'
+        minSdk = 33        // Android 13
+        targetSdk = 37     // Android 17
+        versionCode = 1
+        versionName = '1.0'
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+}

@@ -1,0 +1,2 @@
+"C:/Users/Rust Player/Desktop/Projects/VaryaLoveStepan/android/app/src/main/java/com/varya/mentions/MainActivity.java"
+"C:/Users/Rust Player/Desktop/Projects/VaryaLoveStepan/android/build-manual/gen/com/varya/mentions/R.java"

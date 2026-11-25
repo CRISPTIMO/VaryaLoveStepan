@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- сердечко по центру безопасной зоны адаптивной иконки (108dp, центр 72dp) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="@color/pink_icon"
+        android:pathData="M54,76 L36.5,58.5 C31.5,53.5 31.5,45.5 36.5,40.5 C41.5,35.5 49.5,35.5 54,41 C58.5,35.5 66.5,35.5 71.5,40.5 C76.5,45.5 76.5,53.5 71.5,58.5 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.7"
+        android:pathData="M41,45 C42.5,42.5 45.5,41.5 47.5,42.5 C45,43.5 43.5,45.5 43,48 Z" />
+</vector>

@@ -1,0 +1,2 @@
+@echo off
+call "C:\Users\Rust Player\Desktop\Projects\VaryaLoveStepan\sdk-download\tools\build-tools\android-37.0\apksigner.bat" sign --ks "C:\Users\Rust Player\Desktop\Projects\VaryaLoveStepan\android\release.keystore" --ks-pass pass:mentions --key-pass pass:mentions --out "C:\Users\Rust Player\Desktop\Projects\VaryaLoveStepan\Schetchik.apk" "C:\Users\Rust Player\Desktop\Projects\VaryaLoveStepan\android\build-manual\aligned.apk"

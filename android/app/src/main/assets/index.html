@@ -18,7 +18,11 @@
     --muted: #b07a98;
     --shadow: 0 8px 24px rgba(255, 111, 174, 0.25);
   }
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  /* без синей подсветки и рамки фокуса при нажатии */
+  button { outline: none; -webkit-user-select: none; user-select: none; }
+  button:focus, button:focus-visible { outline: none; }
+  button::-moz-focus-inner { border: 0; }
   body {
     margin: 0;
     min-height: 100vh;
@@ -99,6 +103,7 @@
   .big-btn:active { transform: translateY(3px); box-shadow: none; }
   .btn-stepa { background: linear-gradient(135deg, #ff6fae, #ff8fc4); }
   .btn-femboy { background: linear-gradient(135deg, #b57bff, #d6a8ff); }
+  .btn-anton { background: linear-gradient(135deg, #ff9a7a, #ffbf8f); }
   .big-btn .count {
     background: rgba(255,255,255,.3); border-radius: 12px; padding: 4px 10px; min-width: 36px;
   }
@@ -121,6 +126,7 @@
   .stats td:last-child { border-radius: 0 14px 14px 0; }
   .stats .stepa td:first-child { color: var(--pink-dark); }
   .stats .femboy td:first-child { color: var(--purple); }
+  .stats .anton td:first-child { color: #f07a52; }
   .stats-note { text-align: center; font-size: 11px; color: var(--muted); margin-top: 6px; }
 
   /* вылетающее сердечко при клике */
@@ -157,6 +163,7 @@
       <tbody>
         <tr class="stepa"><td>💖 Степа</td><td id="sDay"></td><td id="sMonth"></td><td id="sTotal"></td></tr>
         <tr class="femboy"><td>🎀 Фембои</td><td id="fDay"></td><td id="fMonth"></td><td id="fTotal"></td></tr>
+        <tr class="anton"><td>🧸 Антон</td><td id="aDay"></td><td id="aMonth"></td><td id="aTotal"></td></tr>
       </tbody>
     </table>
     <div class="stats-note" id="statsNote"></div>
@@ -169,9 +176,11 @@
     <div class="date-label" id="modalDate"></div>
     <button class="big-btn btn-stepa" id="addStepa"><span>💖 Упомянула Степу</span><span class="count" id="mStepa">0</span></button>
     <button class="big-btn btn-femboy" id="addFemboy"><span>🎀 Упомянула фембоев</span><span class="count" id="mFemboy">0</span></button>
+    <button class="big-btn btn-anton" id="addAnton"><span>🧸 Упомянула Антона</span><span class="count" id="mAnton">0</span></button>
     <div class="undo-row">
       <button id="undoStepa">− Степа</button>
       <button id="undoFemboy">− Фембои</button>
+      <button id="undoAnton">− Антон</button>
     </div>
     <button class="close-btn" id="closeModal">закрыть ♡</button>
   </div>
@@ -182,7 +191,7 @@
   const MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
   const MONTHS_GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 
-  // data: { "2026-11-25": { stepa: 2, femboy: 1 } }
+  // data: { "2026-11-25": { stepa: 2, femboy: 1, anton: 0 } }
   let data = {};
   try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch (e) { data = {}; }
   const save = () => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {} };
@@ -196,7 +205,8 @@
     return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
   }
   function parseKey(k) { const [y, m, d] = k.split('-').map(Number); return { y, m: m - 1, d }; }
-  const get = (k) => data[k] || { stepa: 0, femboy: 0 };
+  // старые записи без anton дополняются нулём
+  const get = (k) => ({ stepa: 0, femboy: 0, anton: 0, ...data[k] });
 
   function renderCalendar() {
     document.getElementById('monthTitle').textContent = `${MONTHS[viewMonth]} ${viewYear}`;
@@ -216,7 +226,7 @@
       const v = get(k);
       const btn = document.createElement('button');
       btn.className = 'day' + (k === todayKey ? ' today' : '') + (k === selected ? ' selected' : '');
-      btn.innerHTML = `<span>${d}</span><span class="dots">${v.stepa ? '💖' : ''}${v.femboy ? '🎀' : ''}</span>`;
+      btn.innerHTML = `<span>${d}</span><span class="dots">${v.stepa ? '💖' : ''}${v.femboy ? '🎀' : ''}${v.anton ? '🧸' : ''}</span>`;
       btn.onclick = () => openModal(k);
       grid.appendChild(btn);
     }
@@ -225,18 +235,22 @@
   function renderStats() {
     const sel = parseKey(selected);
     const monthPrefix = `${viewYear}-${String(viewMonth + 1).padStart(2, '0')}`;
-    let ms = 0, mf = 0, ts = 0, tf = 0;
-    for (const [k, v] of Object.entries(data)) {
-      ts += v.stepa; tf += v.femboy;
-      if (k.startsWith(monthPrefix)) { ms += v.stepa; mf += v.femboy; }
+    let ms = 0, mf = 0, ma = 0, ts = 0, tf = 0, ta = 0;
+    for (const k of Object.keys(data)) {
+      const v = get(k);
+      ts += v.stepa; tf += v.femboy; ta += v.anton;
+      if (k.startsWith(monthPrefix)) { ms += v.stepa; mf += v.femboy; ma += v.anton; }
     }
     const day = get(selected);
     document.getElementById('sDay').textContent = day.stepa;
     document.getElementById('fDay').textContent = day.femboy;
+    document.getElementById('aDay').textContent = day.anton;
     document.getElementById('sMonth').textContent = ms;
     document.getElementById('fMonth').textContent = mf;
+    document.getElementById('aMonth').textContent = ma;
     document.getElementById('sTotal').textContent = ts;
     document.getElementById('fTotal').textContent = tf;
+    document.getElementById('aTotal').textContent = ta;
     document.getElementById('thDay').textContent = `${sel.d} ${MONTHS_GEN[sel.m].slice(0, 3)}`;
     document.getElementById('thMonth').textContent = MONTHS[viewMonth].slice(0, 3);
     document.getElementById('statsNote').textContent = `день — выбранная дата, месяц — ${MONTHS[viewMonth]} ${viewYear}`;
@@ -256,13 +270,14 @@
     const v = get(selected);
     document.getElementById('mStepa').textContent = v.stepa;
     document.getElementById('mFemboy').textContent = v.femboy;
+    document.getElementById('mAnton').textContent = v.anton;
   }
   function change(type, delta, ev) {
     const v = { ...get(selected) };
     v[type] = Math.max(0, v[type] + delta);
-    if (v.stepa === 0 && v.femboy === 0) delete data[selected]; else data[selected] = v;
+    if (v.stepa === 0 && v.femboy === 0 && v.anton === 0) delete data[selected]; else data[selected] = v;
     save(); updateModal(); render();
-    if (delta > 0 && ev) burst(ev.clientX, ev.clientY, type === 'stepa' ? '💖' : '🎀');
+    if (delta > 0 && ev) burst(ev.clientX, ev.clientY, { stepa: '💖', femboy: '🎀', anton: '🧸' }[type]);
   }
   function burst(x, y, emoji) {
     for (let i = 0; i < 6; i++) {
@@ -282,6 +297,8 @@
   document.getElementById('addFemboy').onclick = (e) => change('femboy', 1, e);
   document.getElementById('undoStepa').onclick = () => change('stepa', -1);
   document.getElementById('undoFemboy').onclick = () => change('femboy', -1);
+  document.getElementById('addAnton').onclick = (e) => change('anton', 1, e);
+  document.getElementById('undoAnton').onclick = () => change('anton', -1);
   document.getElementById('closeModal').onclick = () => document.getElementById('modalBack').classList.remove('open');
   document.getElementById('modalBack').onclick = (e) => { if (e.target.id === 'modalBack') e.target.classList.remove('open'); };
   // для кнопки «Назад» в Android-приложении

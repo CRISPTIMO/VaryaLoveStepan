@@ -38,7 +38,7 @@ echo "→ ресурсы"
 "$BT/aapt2" link -I "$W_ANDROID_JAR" \
   --manifest "$W_OUT/AndroidManifest.xml" \
   --min-sdk-version 33 --target-sdk-version 37 \
-  --version-code 1 --version-name 1.0 \
+  --version-code 2 --version-name 1.1 \
   -A "$W_APP/assets" --java "$W_OUT/gen" \
   -o "$W_OUT/unsigned.apk" "$W_OUT/res.zip"
 

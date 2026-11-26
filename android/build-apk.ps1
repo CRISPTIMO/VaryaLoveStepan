@@ -45,7 +45,7 @@ if ($LASTEXITCODE -ne 0) { throw "aapt2 compile failed" }
 & $Aapt2 link -I $AndroidJar `
     --manifest "$Out\AndroidManifest.xml" `
     --min-sdk-version 33 --target-sdk-version 37 `
-    --version-code 1 --version-name "1.0" `
+    --version-code 2 --version-name "1.1" `
     -A "$App\assets" --java "$Out\gen" `
     -o "$Out\unsigned.apk" "$Out\res.zip"
 if ($LASTEXITCODE -ne 0) { throw "aapt2 link failed" }
